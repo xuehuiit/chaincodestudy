@@ -67,7 +67,7 @@ func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function strin
 	// Write the state to the ledger - this put is illegal within Run
 	err = stub.PutState(A, []byte(strconv.Itoa(Aval)))
 	if err != nil {
-		jsonResp := "{\"Error\":\"#################!!!!!!!!!!!!!!!!!!!!!Cannot put state within chaincode query\"}"
+		jsonResp := "{\"Error\": \"  ##### hello fabric ######   !Cannot put state within chaincode query\"}"
 		return nil, errors.New(jsonResp)
 	}
 
