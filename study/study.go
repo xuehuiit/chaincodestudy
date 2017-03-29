@@ -9,7 +9,7 @@ import (
 
 // 数据结构
 type SimpleChaincode struct {
-// 初始化方法，键值对的简单存储
+	// 初始化方法，键值对的简单存储
 }
 
 func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
@@ -67,7 +67,7 @@ func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function strin
 	// Write the state to the ledger - this put is illegal within Run
 	err = stub.PutState(A, []byte(strconv.Itoa(Aval)))
 	if err != nil {
-		jsonResp := "{\"Error\":\"Cannot put state within chaincode query\"}"
+		jsonResp := "{\"Error\":\"!!!!!!!!!!!!!!!!!!!!!Cannot put state within chaincode query\"}"
 		return nil, errors.New(jsonResp)
 	}
 
