@@ -9,9 +9,9 @@ import (
 
 // 数据结构
 type SimpleChaincode struct {
+// 初始化方法，键值对的简单存储
 }
 
-// 初始化方法，键值对的简单存储
 func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
 	var A string // Entity
 	var Aval int // Asset holding
