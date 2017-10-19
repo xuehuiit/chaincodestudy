@@ -16,7 +16,7 @@ import (
 	"fmt"
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
-	pb "github.com/hyperledger/fabric/protos/peer"
+	 pb "github.com/hyperledger/fabric/protos/peer"
 
 	"strconv"
 )
@@ -48,9 +48,12 @@ func (t *chainCodeStudy1) Init(stub shim.ChaincodeStubInterface) pb.Response {
 
 
 	var err error
-	_, args := stub.GetFunctionAndParameters()
+
 
 	//获取传入参数值，在端采用数组的方式传入相关的参数
+	_, args := stub.GetFunctionAndParameters()
+
+
 
 	if len(args) != 4 {
 
