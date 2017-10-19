@@ -67,7 +67,15 @@ func (t *simplechaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 
 	fmt.Printf(" parm1: %s , parm2 : %s , parm3 : %s ", arg1,arg2,arg3)
 
-	return shim.Success(nil)
+	return shim.Success([]byte(" success !!! "))
 
 
+}
+
+
+func main() {
+	err := shim.Start(new(simplechaincode))
+	if err != nil {
+		fmt.Printf("Error starting Simple chaincode: %s", err)
+	}
 }
