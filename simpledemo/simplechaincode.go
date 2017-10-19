@@ -4,15 +4,13 @@
 
   http://www.xuehuiit.com
 
-  QQ 411321687
+  QQ 41132168111
 
- */
+*/
 
 package main
 
 import (
-
-
 	"fmt"
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
@@ -24,14 +22,10 @@ import (
 //定义一个机构体，作为chaincode的主对象，可以是任何符合go语言规范的命名方式
 
 type simplechaincode struct {
-
 }
-
 
 var A, B string
 var Aval, Bval, X int
-
-
 
 /**
 	系统初始化方法， 在部署chaincode的过程中当执行命令
@@ -43,21 +37,17 @@ var Aval, Bval, X int
     的时候会调用该方法
 
 
- */
+*/
 func (t *simplechaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
 
-
 	var err error
-
 
 	//获取传入参数值，在端采用数组的方式传入相关的参数
 	_, args := stub.GetFunctionAndParameters()
 
-
-
 	if len(args) != 4 {
 
-		errinfo := fmt.Sprint(" 参数值错误 . Expecting 4 ， 传入值为  %d",len(args))
+		errinfo := fmt.Sprint(" 参数值错误 . Expecting 4 ， 传入值为  %d", len(args))
 		return shim.Error(errinfo)
 	}
 
@@ -95,16 +85,15 @@ func (t *simplechaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
 
 /**
 
-     主业务逻辑，在执行命令
-     peer chaincode invoke -o 192.168.23.212:7050 -C roberttestchannel -n r_test_cc6 -c '{"Args":["invoke","a","b","1"]}'
+  主业务逻辑，在执行命令
+  peer chaincode invoke -o 192.168.23.212:7050 -C roberttestchannel -n r_test_cc6 -c '{"Args":["invoke","a","b","1"]}'
 
-     的时候系统会调用该方法并传入相关的参数，注意 "invoke" 之后的参数是需要传入的参数
+  的时候系统会调用该方法并传入相关的参数，注意 "invoke" 之后的参数是需要传入的参数
 
 
 
- */
+*/
 func (t *simplechaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
-
 
 	function, args := stub.GetFunctionAndParameters()
 	if function == "invoke" {
@@ -113,31 +102,28 @@ func (t *simplechaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 
 	return shim.Error("Invalid invoke function name. Expecting \"invoke\"")
 
-
 }
-
 
 /**
 
-    业务方法，以为chaincode对外提供的业务接口只有 Invoke方法，如果业务逻辑比较发展，可以将相关的业务分成多个方法，然后在
-    Invoke 方法中调用这些方法，
+  业务方法，以为chaincode对外提供的业务接口只有 Invoke方法，如果业务逻辑比较发展，可以将相关的业务分成多个方法，然后在
+  Invoke 方法中调用这些方法，
 
-    本方法是其中的一个业务方法，本方法模拟从账号A，转账X 给账户B
+  本方法是其中的一个业务方法，本方法模拟从账号A，转账X 给账户B
 
- */
+*/
 func (t *simplechaincode) invoke(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 
 	// Transaction makes payment of X units from A to B
 	X, err := strconv.Atoi(args[0])
 	if err != nil {
 		fmt.Printf("这是服务器的信息 只能显示在服务器端  ", args[0], err)
-		return shim.Error( fmt.Sprintf(" 参数 %s 转换时发生错误  %s ！！！！！ " , args[0] , err ) )
+		return shim.Error(fmt.Sprintf(" 参数 %s 转换时发生错误  %s ！！！！！ ", args[0], err))
 	}
 
 	Aval = Aval - X
 	Bval = Bval + X
 	ts, err2 := stub.GetTxTimestamp()
-
 
 	if err2 != nil {
 		fmt.Printf("Error getting transaction timestamp: %s", err2)
