@@ -67,7 +67,7 @@ func (t *simplechaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 
 	fmt.Printf(" parm1: %s , parm2 : %s , parm3 : %s ", arg1,arg2,arg3)
 
-	return shim.Success([]byte(" success !!! "))
+	return shim.Success(nil)
 
 
 }
