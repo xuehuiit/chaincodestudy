@@ -23,7 +23,7 @@ import (
 
 //定义一个机构体，作为chaincode的主对象，可以是任何符合go语言规范的命名方式
 
-type chainCodeStudy1 struct {
+type simplechaincode struct {
 
 }
 
@@ -44,7 +44,7 @@ var Aval, Bval, X int
 
 
  */
-func (t *chainCodeStudy1) Init(stub shim.ChaincodeStubInterface) pb.Response {
+func (t *simplechaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
 
 
 	var err error
@@ -103,7 +103,7 @@ func (t *chainCodeStudy1) Init(stub shim.ChaincodeStubInterface) pb.Response {
 
 
  */
-func (t *chainCodeStudy1) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
+func (t *simplechaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 
 
 	function, args := stub.GetFunctionAndParameters()
@@ -125,7 +125,7 @@ func (t *chainCodeStudy1) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
     本方法是其中的一个业务方法，本方法模拟从账号A，转账X 给账户B
 
  */
-func (t *chainCodeStudy1) invoke(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+func (t *simplechaincode) invoke(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 
 	// Transaction makes payment of X units from A to B
 	X, err := strconv.Atoi(args[0])
@@ -149,7 +149,7 @@ func (t *chainCodeStudy1) invoke(stub shim.ChaincodeStubInterface, args []string
 }
 
 func main() {
-	err := shim.Start(new(chainCodeStudy1))
+	err := shim.Start(new(simplechaincode))
 	if err != nil {
 		fmt.Printf("Error starting Simple chaincode: %s", err)
 	}
