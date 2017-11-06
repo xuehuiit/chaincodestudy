@@ -11,8 +11,8 @@
 package main
 
 import (
-	"fmt"
 
+	"fmt"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	pb "github.com/hyperledger/fabric/protos/peer"
 
@@ -21,6 +21,7 @@ import (
 
 //定义一个机构体，作为chaincode的主对象，可以是任何符合go语言规范的命名方式
 type simplechaincode struct {
+
 }
 
 
@@ -37,7 +38,7 @@ type simplechaincode struct {
 */
 func (t *simplechaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
 
-	fmt.Println("  ========  success it is view in docker  ========== ")
+	fmt.Println(" <<  ========  success init it is view in docker  ==========  >> ")
 	return shim.Success([]byte("success init "))
 }
 
@@ -52,7 +53,10 @@ func (t *simplechaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
 */
 func (t *simplechaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 
-	fmt.Println("  ========  success it is view in docker  ========== ")
+	fmt.Println("  ========  1、success it is view in docker  ========== ")
+	fmt.Println("  ========  2、success it is view in docker  ========== ")
+	fmt.Println("  ========  3、success it is view in docker  ========== ")
+	fmt.Println("  ========  4、success it is view in docker  ========== ")
 	return shim.Success([]byte("success invok "))
 
 }
