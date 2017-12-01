@@ -375,7 +375,7 @@ func (t *simplechaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 		//parms1 := []string{ "query", "GetCreator","akeym","11234343" }
 		parms1 := []string{"query","a"}
 		queryArgs := make([][]byte, len(parms1))
-		for i, arg := range args {
+		for i, arg := range parms1 {
 			queryArgs[i] = []byte(arg)
 		}
 
