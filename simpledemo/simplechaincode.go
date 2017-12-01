@@ -1,414 +1,196 @@
-/**
-
-  Copyright xuehuiit Corp. 2018 All Rights Reserved.
-
-  http://www.xuehuiit.com
-
-  QQ 41132168111
-
+/*
+Copyright IBM Corp. 2016 All Rights Reserved.
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+		 http://www.apache.org/licenses/LICENSE-2.0
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
 */
 
 package main
 
-import (
+//WARNING - this chaincode's ID is hard-coded in chaincode_example04 to illustrate one way of
+//calling chaincode from a chaincode. If this example is modified, chaincode_example04.go has
+//to be modified as well with the new ID of chaincode_example02.
+//chaincode_example05 show's how chaincode ID can be passed in as a parameter instead of
+//hard-coding.
 
+import (
 	"fmt"
+	"strconv"
+
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	pb "github.com/hyperledger/fabric/protos/peer"
-	"github.com/hyperledger/fabric/common/util"
-	"encoding/json"
-	"strings"
-	"time"
 )
 
-//定义一个机构体，作为chaincode的主对象，可以是任何符合go语言规范的命名方式
-type simplechaincode struct {
-
+// SimpleChaincode example simple Chaincode implementation
+type SimpleChaincode struct {
 }
 
-
-/**
-
-	系统初始化方法， 在部署chaincode的过程中当执行命令
-
-    peer chaincode instantiate -o orderer.robertfabrictest.com:7050 -C
-         roberttestchannel -n r_test_cc6 -v 1.0 -c '{"Args":["init","a","100","b","200"]}'
-         -P "OR	('Org1MSP.member','Org2MSP.member')"
-
-    的时候会调用该方法
-
-
-	https://github.com/hyperledger/fabric/blob/release/core/chaincode/shim/interfaces.go  所有的注释这里
-
-*/
-func (t *simplechaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
-
-	fmt.Println(" <<  ========  success init it is view in docker  ==========  >> ")
-	return shim.Success([]byte("success init "))
-}
-
-/**
-
-  主业务逻辑，在执行命令
-  peer chaincode invoke -o 192.168.23.212:7050 -C roberttestchannel -n r_test_cc6 -c '{"Args":["invoke","a","b","1"]}'
-
-  的时候系统会调用该方法并传入相关的参数，注意 "invoke" 之后的参数是需要传入的参数
-
-
-*/
-func (t *simplechaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
-
-
-	_,args := stub.GetFunctionAndParameters()
-
-	var a_parm = args[0]
-	var b_parm = args[1]
-	var c_parm = args[2]
-
-
-	fmt.Println("  ========  1、success it is view in docker  ========== ")
-	fmt.Println("  ========  2、success it is view in docker  ========== ")
-	fmt.Println("  ========  3、success it is view in docker  ========== ")
-	fmt.Println("  ========  4、success it is view in docker  ========== ")
-
-
-	fmt.Printf(" parm is  %s  %s  %s   \n " , a_parm , b_parm , c_parm )
-
-
-	// 设定值
-	if a_parm == "set"{
-
-		stub.PutState(b_parm,[]byte(c_parm))
-		return shim.Success( []byte( "success invok " + c_parm  )  )
-
-	}else if a_parm == "get"{   //取单个值
-
-		var keyvalue []byte
-		var err error
-		keyvalue,err = stub.GetState(b_parm)
-
-		if( err != nil  ){
-
-			return shim.Error(" finad error! ")
-		}
-
-
-		return shim.Success( keyvalue )
-
-
-
-	}else if a_parm == "CreateCompositeKeyandset" { // 设置一个复合键的值
-
-		//parms := []string{ "c_1" , "d_1" , "e_1","f_1","g_1","h_1" }
-		parms := strings.Split(c_parm,",")
-		ckey ,_ := stub.CreateCompositeKey(b_parm,parms)
-
-		fmt.Println("  ========  GetStateByPartialCompositeKey   ========== ",ckey)
-
-
-		err := stub.PutState(ckey , []byte(c_parm) )
-
-		if err !=nil{
-
-			fmt.Println("CreateCompositeKeyandset() : Error inserting Object into State Database %s", err)
-		}
-
-
-		return shim.Success([]byte(ckey))
-
-
-
-	}else if a_parm == "GetStateByPartialCompositeKey" { // 设置一个复合键的值
-
-
-		fmt.Println("  ========  GetStateByPartialCompositeKey   ========== ")
-
-		searchparm := strings.Split(c_parm,",")
-		rs, err := stub.GetStateByPartialCompositeKey(b_parm,searchparm)
-		if err != nil {
-			error_str := fmt.Sprintf("GetListOfInitAucs operation failed. Error marshaling JSON: %s", err)
-			return shim.Error(error_str)
-		}
-
-		defer rs.Close()
-
-		// Iterate through result set
-		var i int
-		var tlist []string // Define a list
-		for i = 0; rs.HasNext(); i++ {
-
-			// We can process whichever return value is of interest
-			responseRange, err := rs.Next()
-
-			if err != nil {
-				error_str := fmt.Sprintf("GetListOfInitAucs() operation failed - Unmarshall Error. %s", err)
-				fmt.Println(error_str)
-				return shim.Error(error_str)
-			}
-
-			objectType, compositeKeyParts, _ := stub.SplitCompositeKey(responseRange.Key)
-
-			/*fmt.Println(" objectType value is  "+objectType)
-			fmt.Println(compositeKeyParts)*/
-
-			returnedColor := compositeKeyParts[0]
-			returnedMarbleName := compositeKeyParts[1]
-			fmt.Printf("- found a marble from index:%s color:%s name:%s\n", objectType, returnedColor, returnedMarbleName)
-
-			/*for index, attr := range attributes {
-
-				fmt.Sprintf("  The arrt is : index:  =>  %d  ,  the arrt ->   %s   " ,index,attr)
-
-			}*/
-
-
-			tlist = append(tlist, responseRange.Key)
-		}
-
-		jsonRows, err := json.Marshal(tlist)
-		if err != nil {
-			error_str := fmt.Sprintf("GetListOfInitAucs() operation failed - Unmarshall Error. %s", err)
-			fmt.Println(error_str)
-			return shim.Error(error_str)
-		}
-
-
-
-		//fmt.Println("List of Auctions Requested : ", jsonRows)
-		return shim.Success(jsonRows)
-
-		//return shim.Success([]byte("dddd"))
-
-
-
-	}else if a_parm == "delete" { //删除某个值
-
-
-		fmt.Println("  ========  delete   ========== %s ",b_parm)
-
-		err := stub.DelState(b_parm)
-
-		if err != nil {
-			return shim.Error(" 删除出现错误！！！！！")
-		}
-
-		return shim.Success([]byte(" 删除正确！！！！！  "))
-
-
-	}else if a_parm == "getStatebyrange" { //查询制定范围内的键值 ，目前没有
-
-
-		fmt.Println("  ========  getStatebyrange   ========== ")
-
-		startkey := b_parm
-		endkey := c_parm
-
-		keysIter, err := stub.GetStateByRange( startkey , endkey )
-
-		if err != nil {
-			return shim.Error(fmt.Sprintf("keys operation failed. Error accessing state: %s", err))
-		}
-
-		defer keysIter.Close()
-
-		var keys []string
-
-		for keysIter.HasNext(){
-
-			response,iterErr := keysIter.Next()
-
-			if iterErr != nil{
-				return shim.Error(fmt.Sprintf("find an error %s",iterErr))
-			}
-
-			keys = append(keys, response.Key)
-
-		}
-
-		for key, value := range keys {
-			fmt.Printf("key %d contains %s\n", key, value)
-		}
-
-
-		jsonKeys, err := json.Marshal(keys)
-		if err != nil {
-			return shim.Error(fmt.Sprintf("keys operation failed. Error marshaling JSON: %s", err))
-		}
-
-		return shim.Success(jsonKeys)
-
-
-
-	}else if a_parm == "GetHistoryForKey" { //取单个值的历史记录
-
-		keysIter, err := stub.GetHistoryForKey(b_parm);
-
-
-		if err != nil {
-			return shim.Error(fmt.Sprintf("GetHistoryForKey failed. Error accessing state: %s", err))
-		}
-		defer keysIter.Close()
-
-		var keys []string
-
-		for keysIter.HasNext() {
-
-			response, iterErr := keysIter.Next()
-			if iterErr != nil {
-				return shim.Error(fmt.Sprintf("GetHistoryForKey operation failed. Error accessing state: %s", err))
-			}
-
-			//交易编号
-			txid := response.TxId
-			//交易的值
-			txvalue := response.Value
-			//当前交易的状态
-			txstatus := response.IsDelete
-			//交易发生的时间戳
-			txtimesamp :=response.Timestamp
-
-			tm := time.Unix(txtimesamp.Seconds, 0)
-			datestr := tm.Format("2006-01-02 03:04:05 PM")
-
-
-			fmt.Printf(" Tx info -   txid : %s   value :  %s  if delete: %t   datetime : %s \n ", txid , string(txvalue) , txstatus , datestr )
-
-			keys = append( keys , txid)
-
-
-
-
-		}
-
-
-		jsonKeys, err := json.Marshal(keys)
-		if err != nil {
-			return shim.Error(fmt.Sprintf("query operation failed. Error marshaling JSON: %s", err))
-		}
-
-		return shim.Success(jsonKeys)
-
-
-	}else if a_parm == "GetTxID" { //获取当前交易的编号
-
-		txid := stub.GetTxID();
-		fmt.Println("  ========  GetTxID   ==========  %s  ",txid)
-		return shim.Success([]byte(txid))
-
-
-	}else if a_parm == "GetTxTimestamp" { //获取当前时间
-
-
-		txtime,err:= stub.GetTxTimestamp()
-		if err != nil {
-			fmt.Printf("Error getting transaction timestamp: %s", err)
-			return shim.Error(fmt.Sprintf("Error getting transaction timestamp: %s", err))
-		}
-
-
-		tm := time.Unix(txtime.Seconds, 0)
-
-		fmt.Printf("Transaction Time: %v \n ", tm.Format("2006-01-02 03:04:05 PM"))
-
-		return shim.Success([]byte(fmt.Sprint("  time is :   %s   ",tm.Format("2006-01-02 15:04:05"))))
-
-
-	}else if a_parm == "GetBinding" { //取单个值
-
-
-		bindtype , err := stub.GetBinding()
-
-		if err != nil {
-			fmt.Printf("Error getting transaction timestamp: %s", err)
-			return shim.Error(fmt.Sprintf("Error getting transaction timestamp: %s", err))
-		}
-
-		fmt.Printf("GetBinding : %s \n ", string(bindtype[:])  )
-
-		return shim.Success(bindtype)
-
-	}else if a_parm == "GetSignedProposal" { //取单个值
-
-
-		stub.GetSignedProposal()
-		return shim.Success([]byte("success invok  and Not opter !!!!!!!! "))
-
-
-	}else if a_parm == "GetCreator" { //取访问请求者的证书
-
-		createbytes , err := stub.GetCreator()
-
-		if err != nil {
-			fmt.Printf("Error getting transaction timestamp: %s", err)
-			return shim.Error(fmt.Sprintf("Error getting transaction timestamp: %s", err))
-		}
-
-		return shim.Success(createbytes)
-
-
-	}else if a_parm == "GetTransient" { //获取单个值的方式
-
-		transient,err := stub.GetTransient()
-
-		if err != nil {
-			fmt.Printf("Error getting transaction timestamp: %s", err)
-			return shim.Error(fmt.Sprintf("Error getting transaction timestamp: %s", err))
-		}
-
-		for key := range transient {
-			fmt.Printf(" the %s    and value is %s  \n", key, string(transient[key]));
-		}
-
-		return shim.Success([]byte("success invok  and Not opter !!!!!!!! "))
-
-	}else if a_parm == "setloglevel" { //获取单个值的方式
-
-		logleve , _ := shim.LogLevel("dubug")
-		shim.SetLoggingLevel(logleve)
-		return shim.Success([]byte("success invok  and Not opter !!!!!!!! "))
-
-	}else if a_parm == "InvokeChaincode" { //获取单个值的方式
-
-
-		queryArgs := util.ToChaincodeArgs("query", "GetCreator","akeym","11234343")
-		response := stub.InvokeChaincode("sampledemo5_19",queryArgs,"")
-
-		if response.Status != shim.OK {
-			errStr := fmt.Sprintf("Failed to query chaincode. Got error: %s", response.Payload)
-			fmt.Printf(errStr)
-			return shim.Error(errStr)
-		}
-
-		result := string(response.Payload)
-
-
-
-		fmt.Printf(" invoke chaincode  %s " ,result)
-
-		return shim.Success([]byte("success InvokeChaincode  and Not opter !!!!!!!! "))
-
-	}else{
-
-
-		return shim.Success([]byte("success invok  and Not opter !!!!!!!! "))
-
+func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
+	fmt.Println("ex02 Init")
+	_, args := stub.GetFunctionAndParameters()
+	var A, B string    // Entities
+	var Aval, Bval int // Asset holdings
+	var err error
+
+	if len(args) != 4 {
+		return shim.Error("Incorrect number of arguments. Expecting 4")
 	}
 
+	// Initialize the chaincode
+	A = args[0]
+	Aval, err = strconv.Atoi(args[1])
+	if err != nil {
+		return shim.Error("Expecting integer value for asset holding")
+	}
+	B = args[2]
+	Bval, err = strconv.Atoi(args[3])
+	if err != nil {
+		return shim.Error("Expecting integer value for asset holding")
+	}
+	fmt.Printf("Aval = %d, Bval = %d\n", Aval, Bval)
 
+	// Write the state to the ledger
+	err = stub.PutState(A, []byte(strconv.Itoa(Aval)))
+	if err != nil {
+		return shim.Error(err.Error())
+	}
 
+	err = stub.PutState(B, []byte(strconv.Itoa(Bval)))
+	if err != nil {
+		return shim.Error(err.Error())
+	}
 
-
-
-
-
+	return shim.Success(nil)
 }
 
+func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
+	fmt.Println("ex02 Invoke")
+	function, args := stub.GetFunctionAndParameters()
+	if function == "invoke" {
+		// Make payment of X units from A to B
+		return t.invoke(stub, args)
+	} else if function == "delete" {
+		// Deletes an entity from its state
+		return t.delete(stub, args)
+	} else if function == "query" {
+		// the old "Query" is now implemtned in invoke
+		return t.query(stub, args)
+	}
+
+	return shim.Error("Invalid invoke function name. Expecting \"invoke\" \"delete\" \"query\"")
+}
+
+// Transaction makes payment of X units from A to B
+func (t *SimpleChaincode) invoke(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	var A, B string    // Entities
+	var Aval, Bval int // Asset holdings
+	var X int          // Transaction value
+	var err error
+
+	if len(args) != 3 {
+		return shim.Error("Incorrect number of arguments. Expecting 3")
+	}
+
+	A = args[0]
+	B = args[1]
+
+	// Get the state from the ledger
+	// TODO: will be nice to have a GetAllState call to ledger
+	Avalbytes, err := stub.GetState(A)
+	if err != nil {
+		return shim.Error("Failed to get state")
+	}
+	if Avalbytes == nil {
+		return shim.Error("Entity not found")
+	}
+	Aval, _ = strconv.Atoi(string(Avalbytes))
+
+	Bvalbytes, err := stub.GetState(B)
+	if err != nil {
+		return shim.Error("Failed to get state")
+	}
+	if Bvalbytes == nil {
+		return shim.Error("Entity not found")
+	}
+	Bval, _ = strconv.Atoi(string(Bvalbytes))
+
+	// Perform the execution
+	X, err = strconv.Atoi(args[2])
+	if err != nil {
+		return shim.Error("Invalid transaction amount, expecting a integer value")
+	}
+	Aval = Aval - X
+	Bval = Bval + X
+	fmt.Printf("Aval = %d, Bval = %d\n", Aval, Bval)
+
+	// Write the state back to the ledger
+	err = stub.PutState(A, []byte(strconv.Itoa(Aval)))
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+
+	err = stub.PutState(B, []byte(strconv.Itoa(Bval)))
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+
+	return shim.Success(nil)
+}
+
+// Deletes an entity from state
+func (t *SimpleChaincode) delete(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	if len(args) != 1 {
+		return shim.Error("Incorrect number of arguments. Expecting 1")
+	}
+
+	A := args[0]
+
+	// Delete the key from the state in ledger
+	err := stub.DelState(A)
+	if err != nil {
+		return shim.Error("Failed to delete state")
+	}
+
+	return shim.Success(nil)
+}
+
+// query callback representing the query of a chaincode
+func (t *SimpleChaincode) query(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	var A string // Entities
+	var err error
+
+	if len(args) != 1 {
+		return shim.Error("Incorrect number of arguments. Expecting name of the person to query")
+	}
+
+	A = args[0]
+
+	// Get the state from the ledger
+	Avalbytes, err := stub.GetState(A)
+	if err != nil {
+		jsonResp := "{\"Error\":\"Failed to get state for " + A + "\"}"
+		return shim.Error(jsonResp)
+	}
+
+	if Avalbytes == nil {
+		jsonResp := "{\"Error\":\"Nil amount for " + A + "\"}"
+		return shim.Error(jsonResp)
+	}
+
+	jsonResp := "{\"Name\":\"" + A + "\",\"Amount\":\"" + string(Avalbytes) + "\"}"
+	fmt.Printf("Query Response:%s\n", jsonResp)
+	return shim.Success(Avalbytes)
+}
 
 func main() {
-	err := shim.Start(new(simplechaincode))
+	err := shim.Start(new(SimpleChaincode))
 	if err != nil {
 		fmt.Printf("Error starting Simple chaincode: %s", err)
 	}
 }
-
-
