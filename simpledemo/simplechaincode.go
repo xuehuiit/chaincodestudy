@@ -370,8 +370,17 @@ func (t *simplechaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	}else if a_parm == "InvokeChaincode" { //获取单个值的方式
 
 
-		/*queryArgs := util.ToChaincodeArgs("query", "GetCreator","akeym","11234343")
-		response := stub.InvokeChaincode("sampledemo5_19",queryArgs,"")
+		//queryArgs := util.ToChaincodeArgs("query", "GetCreator","akeym","11234343")
+
+		//parms1 := []string{ "query", "GetCreator","akeym","11234343" }
+		parms1 := []string{"query","a"}
+		queryArgs := make([][]byte, len(parms1))
+		for i, arg := range args {
+			queryArgs[i] = []byte(arg)
+		}
+
+
+		response := stub.InvokeChaincode("cc_endfinlshed",queryArgs,"roberttestchannel12")
 
 		if response.Status != shim.OK {
 			errStr := fmt.Sprintf("Failed to query chaincode. Got error: %s", response.Payload)
@@ -383,7 +392,7 @@ func (t *simplechaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 
 
 
-		fmt.Printf(" invoke chaincode  %s " ,result)*/
+		fmt.Printf(" invoke chaincode  %s " ,result)
 
 		return shim.Success([]byte("success InvokeChaincode  and Not opter !!!!!!!! "))
 
