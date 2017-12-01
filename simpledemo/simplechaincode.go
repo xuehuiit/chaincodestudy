@@ -394,7 +394,7 @@ func (t *simplechaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 
 		fmt.Printf(" invoke chaincode  %s " ,result)
 
-		return shim.Success([]byte("success InvokeChaincode  and Not opter !!!!!!!! "))
+		return shim.Success([]byte("success InvokeChaincode  and Not opter !!!!!!!! " + result))
 
 	}else{
 
