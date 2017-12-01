@@ -15,7 +15,7 @@ import (
 	"fmt"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	pb "github.com/hyperledger/fabric/protos/peer"
-	"github.com/hyperledger/fabric/common/util"
+	//"github.com/hyperledger/fabric/common/util"
 	"encoding/json"
 	"strings"
 	"time"
@@ -370,7 +370,7 @@ func (t *simplechaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	}else if a_parm == "InvokeChaincode" { //获取单个值的方式
 
 
-		queryArgs := util.ToChaincodeArgs("query", "GetCreator","akeym","11234343")
+		/*queryArgs := util.ToChaincodeArgs("query", "GetCreator","akeym","11234343")
 		response := stub.InvokeChaincode("sampledemo5_19",queryArgs,"")
 
 		if response.Status != shim.OK {
@@ -383,7 +383,7 @@ func (t *simplechaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 
 
 
-		fmt.Printf(" invoke chaincode  %s " ,result)
+		fmt.Printf(" invoke chaincode  %s " ,result)*/
 
 		return shim.Success([]byte("success InvokeChaincode  and Not opter !!!!!!!! "))
 
