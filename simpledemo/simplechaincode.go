@@ -15,7 +15,7 @@ import (
 	"fmt"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	pb "github.com/hyperledger/fabric/protos/peer"
-	//"github.com/hyperledger/fabric/common/util"
+	"github.com/hyperledger/fabric/common/util"
 	"encoding/json"
 	"strings"
 	"time"
@@ -370,15 +370,15 @@ func (t *simplechaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	}else if a_parm == "InvokeChaincode" { //获取单个值的方式
 
 
-		//queryArgs := util.ToChaincodeArgs("query", "GetCreator","akeym","11234343")
+		queryArgs := util.ToChaincodeArgs("query","a")
 
 		//parms1 := []string{ "query", "GetCreator","akeym","11234343" }
-		parms1 := []string{"query","a"}
+		/*parms1 := []string{"query","a"}
 		queryArgs := make([][]byte, len(parms1))
 		for i, arg := range parms1 {
 			queryArgs[i] = []byte(arg)
 		}
-
+		*/
 
 		response := stub.InvokeChaincode("cc_endfinlshed",queryArgs,"roberttestchannel12")
 
