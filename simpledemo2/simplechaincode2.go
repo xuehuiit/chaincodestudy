@@ -78,6 +78,12 @@ func (t *simplechaincode2) Invoke(stub shim.ChaincodeStubInterface) pb.Response 
 	// 设定值
 	if a_parm == "set"{
 
+
+		fmt.Println("  ========  set   ========== ",c_parm)
+		fmt.Println("  ========  set   ========== ",c_parm)
+		fmt.Println("  ========  set   ========== ",c_parm)
+		fmt.Println("  ========  set   ========== ",c_parm)
+
 		stub.PutState(b_parm,[]byte(c_parm))
 		return shim.Success( []byte( "success invok " + c_parm  )  )
 
