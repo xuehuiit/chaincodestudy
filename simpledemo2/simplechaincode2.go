@@ -22,7 +22,7 @@ import (
 )
 
 //定义一个机构体，作为chaincode的主对象，可以是任何符合go语言规范的命名方式
-type simplechaincode2 struct {
+type simplechaincode struct {
 
 }
 
@@ -41,7 +41,7 @@ type simplechaincode2 struct {
 	https://github.com/hyperledger/fabric/blob/release/core/chaincode/shim/interfaces.go  所有的注释这里
 
 */
-func (t *simplechaincode2) Init(stub shim.ChaincodeStubInterface) pb.Response {
+func (t *simplechaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
 
 	fmt.Println(" <<  ========  success init it is view in docker  ==========  >> ")
 	return shim.Success([]byte("success init "))
@@ -56,7 +56,7 @@ func (t *simplechaincode2) Init(stub shim.ChaincodeStubInterface) pb.Response {
 
 
 */
-func (t *simplechaincode2) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
+func (t *simplechaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 
 
 	_,args := stub.GetFunctionAndParameters()
@@ -77,12 +77,6 @@ func (t *simplechaincode2) Invoke(stub shim.ChaincodeStubInterface) pb.Response 
 
 	// 设定值
 	if a_parm == "set"{
-
-
-		fmt.Println("  ========  set   ========== ",c_parm)
-		fmt.Println("  ========  set   ========== ",c_parm)
-		fmt.Println("  ========  set   ========== ",c_parm)
-		fmt.Println("  ========  set   ========== ",c_parm)
 
 		stub.PutState(b_parm,[]byte(c_parm))
 		return shim.Success( []byte( "success invok " + c_parm  )  )
@@ -411,11 +405,16 @@ func (t *simplechaincode2) Invoke(stub shim.ChaincodeStubInterface) pb.Response 
 
 
 
+
+
+
+
+
 }
 
 
 func main() {
-	err := shim.Start(new(simplechaincode2))
+	err := shim.Start(new(simplechaincode))
 	if err != nil {
 		fmt.Printf("Error starting Simple chaincode: %s", err)
 	}
