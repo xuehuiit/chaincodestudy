@@ -22,7 +22,7 @@ import (
 )
 
 //定义一个机构体，作为chaincode的主对象，可以是任何符合go语言规范的命名方式
-type simplechaincode struct {
+type simplechaincode2 struct {
 
 }
 
@@ -41,7 +41,7 @@ type simplechaincode struct {
 	https://github.com/hyperledger/fabric/blob/release/core/chaincode/shim/interfaces.go  所有的注释这里
 
 */
-func (t *simplechaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
+func (t *simplechaincode2) Init(stub shim.ChaincodeStubInterface) pb.Response {
 
 	fmt.Println(" <<  ========  success init it is view in docker  ==========  >> ")
 	return shim.Success([]byte("success init "))
@@ -56,7 +56,7 @@ func (t *simplechaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
 
 
 */
-func (t *simplechaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
+func (t *simplechaincode2) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 
 
 	_,args := stub.GetFunctionAndParameters()
@@ -405,16 +405,11 @@ func (t *simplechaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 
 
 
-
-
-
-
-
 }
 
 
 func main() {
-	err := shim.Start(new(simplechaincode))
+	err := shim.Start(new(simplechaincode2))
 	if err != nil {
 		fmt.Printf("Error starting Simple chaincode: %s", err)
 	}
